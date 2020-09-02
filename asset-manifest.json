@@ -1,0 +1,22 @@
+{
+  "files": {
+    "main.css": "/aws-iot-baseline/static/css/main.9207781b.chunk.css",
+    "main.js": "/aws-iot-baseline/static/js/main.5a062b3d.chunk.js",
+    "main.js.map": "/aws-iot-baseline/static/js/main.5a062b3d.chunk.js.map",
+    "runtime-main.js": "/aws-iot-baseline/static/js/runtime-main.a97fc3d1.js",
+    "runtime-main.js.map": "/aws-iot-baseline/static/js/runtime-main.a97fc3d1.js.map",
+    "static/js/2.88ecbacb.chunk.js": "/aws-iot-baseline/static/js/2.88ecbacb.chunk.js",
+    "static/js/2.88ecbacb.chunk.js.map": "/aws-iot-baseline/static/js/2.88ecbacb.chunk.js.map",
+    "index.html": "/aws-iot-baseline/index.html",
+    "precache-manifest.afa88b4c094c0f7a3ea520db86fa0ea0.js": "/aws-iot-baseline/precache-manifest.afa88b4c094c0f7a3ea520db86fa0ea0.js",
+    "service-worker.js": "/aws-iot-baseline/service-worker.js",
+    "static/css/main.9207781b.chunk.css.map": "/aws-iot-baseline/static/css/main.9207781b.chunk.css.map",
+    "static/js/2.88ecbacb.chunk.js.LICENSE.txt": "/aws-iot-baseline/static/js/2.88ecbacb.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.a97fc3d1.js",
+    "static/js/2.88ecbacb.chunk.js",
+    "static/css/main.9207781b.chunk.css",
+    "static/js/main.5a062b3d.chunk.js"
+  ]
+}
