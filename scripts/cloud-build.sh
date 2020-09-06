@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# What is this?
+# This script will perform some preliminary work before calling the AWS CDK.
+# The AWS CDK will synthesize the Cloud Stack into an AWS CloudFormation template.
+#
+# This script does not deploy the template. To also deploy, use cloud-deploy.sh
+#
+# How do I use it?
+# $ bash <project-root>/scripts/cloud-build.sh
 
 set -e
 
@@ -7,7 +16,7 @@ script_path=${script_dir}/$(basename "${BASH_SOURCE[0]}")
 script_name=$(basename ${BASH_SOURCE[0]})
 
 root_dir=$(cd "${script_dir}/.." && pwd)
-cloud_dir=$(cd "${root_dir}/cloud" && pwd)
+cloud_dir=${root_dir}/cloud
 build_dir=${root_dir}/.build
 
 function toolchain_require() { [ -n "$(command -v $1)" ] && return 0 || >&2 echo "$1: not found"; return 1; }

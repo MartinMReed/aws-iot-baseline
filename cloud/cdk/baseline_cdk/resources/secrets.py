@@ -12,3 +12,11 @@ def create(stack: core.Stack) -> None:
             password_length=256
         )
     )
+
+    aws_secretsmanager.CfnSecret(
+        stack, 'WebPasswordGenerator',
+        name=f'/{cdk.app_name}/web-password',
+        generate_secret_string=aws_secretsmanager.CfnSecret.GenerateSecretStringProperty(
+            password_length=64
+        )
+    )

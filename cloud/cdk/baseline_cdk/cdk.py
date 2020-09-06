@@ -2,15 +2,18 @@ import os
 
 from aws_cdk import core
 
+import baseline_cdk.resources.api_gateway
 import baseline_cdk.resources.cfnres_iot_cacert
 import baseline_cdk.resources.cfnres_iot_cert
 import baseline_cdk.resources.cfnres_iot_fleet
 import baseline_cdk.resources.cfnres_iot_thinggroup
 import baseline_cdk.resources.cfnres_iot_thingtype
+import baseline_cdk.resources.cloudfront
 import baseline_cdk.resources.cloudwatch
 import baseline_cdk.resources.cognito
 import baseline_cdk.resources.iot_policy
 import baseline_cdk.resources.iot_topic
+import baseline_cdk.resources.lambda_apis
 import baseline_cdk.resources.lambda_authorizer
 import baseline_cdk.resources.lambda_ingest
 import baseline_cdk.resources.redis
@@ -49,9 +52,12 @@ stack = core.Stack(
 resources.vpc.create(stack)
 resources.cognito.create(stack)
 resources.lambda_authorizer.create(stack)
+resources.lambda_apis.create(stack)
 resources.lambda_ingest.create(stack)
+resources.api_gateway.create(stack)
 resources.redis.create(stack)
 resources.s3.create(stack)
+resources.cloudfront.create(stack)
 resources.iot_policy.create(stack)
 resources.iot_topic.create(stack)
 resources.cfnres_iot_thingtype.create(stack)

@@ -4,6 +4,7 @@ from redis import Redis
 
 import baseline_cloud.core.aws.ssm
 from baseline_cloud.core import aws
+from baseline_cloud.core.config import config
 
 if os.environ.get('USE_MOCK_REDIS') == '1':
     class Redis(object):
@@ -23,8 +24,8 @@ if os.environ.get('USE_MOCK_REDIS') == '1':
                 self.data.pop(name, None)
 
 redis_client = Redis(
-    host=aws.ssm.get_parameter('redis-address'),
-    port=int(aws.ssm.get_parameter('redis-port'))
+    host=aws.ssm.get_parameter(f'/{config.app_name}/redis-address'),
+    port=int(aws.ssm.get_parameter(f'/{config.app_name}/redis-port'))
 )
 
 

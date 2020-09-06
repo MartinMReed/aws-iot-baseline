@@ -1,4 +1,14 @@
 #!/bin/bash
+#
+# What is this?
+# This script is used for the base of each device integration test. Each test
+# will call back to this script to perform device provisioning through Docker, and
+# then perform any AWS CLI calls and test validation.
+#
+# After the test is complete, the THING and CERTIFICATE provisioned will be destroyed.
+#
+# How do I use it?
+# You do not need to call this script directly. It should be called from other tests.
 
 set +e # avoid -e to ensure cleanup happens
 
@@ -12,7 +22,7 @@ script_path=${script_dir}/$(basename "${BASH_SOURCE[0]}")
 script_name=$(basename ${BASH_SOURCE[0]})
 
 root_dir=$(cd "${script_dir}/.." && pwd)
-device_dir=$(cd "${root_dir}/device" && pwd)
+device_dir=${root_dir}/device
 build_dir=${root_dir}/.build
 
 function toolchain_require() { [ -n "$(command -v $1)" ] && return 0 || >&2 echo "$1: not found"; return 1; }

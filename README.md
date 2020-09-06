@@ -34,13 +34,15 @@ Before you get started building, there are a few configurations available at the
 
 * `debug_lambda_roles` - Boolean; When set to true, all users in the account will be able to assume the lambda roles. This is used for testing lambda code through local docker.
 
+* `debug_api_gateway_errors` - Boolean; When set to true, Amazon API Gateway errors will return a stacktrace.
+
 ### The Cloud Stack
 
 #### Features
 
 1) Building, Deploying, and Integration Testing (see next sections).
 
-2) AWS IoT Rules Engine; A Topic Rule is deployed that listens on the MQTT topic `$aws/rules/<topic_prefix>/#`. From there the payload is sent to an AWS Lambda for handling. This lambda supports provisioning and log messages that go into Amazon CloudWatch.
+2) AWS IoT Rules Engine; A Topic Rule is deployed that listens on the MQTT topic `$aws/rules/<topic_prefix>/#`. From there the payload is sent to an AWS Lambda for handling. This lambda supports provisioning, and log messages that go into Amazon CloudWatch.
 
 3) AWS IoT CA Certificate; The custom root CA will be generated using an AWS CloudFormation Custom Resource. The certificate will be registered with AWS IoT Core, and it's private key will be stored in the AWS Secrets Manager.
 
@@ -49,6 +51,10 @@ Before you get started building, there are a few configurations available at the
 5) AWS Systems Manager Parameter Store; Since the AWS CDK creates the AWS Lambda packages before the AWS CloudFormation template is deployed, any dynamic settings like resource ARNs are stored in the AWS Systems Manager Parameter Store instead of the JSON config file embedded in the lambda packages.
 
 6) Amazon VPC; The entire cloud stack is deployed into it's own Amazon VPC. This makes initial development and testing easier as you don't need to worry about breaking any existing resources.
+
+7) Web Frontend; A Thing management website is written with React and gets deployed to S3. The password for login is generated randomly and stored in the AWS Systems Manager Parameter Store, or you can specify it through the root config.json file.
+
+8) Amazon API Gateway; REST APIs for the Web Frontend are available, along with a custom Authorizer that checks JWT session credentials.
 
 #### Building
 
@@ -186,6 +192,7 @@ aws-iot-baseline
 │       └── scripts
 │           ├── localproxy-ssh.sh  ................... run AWS Local Proxy (ssh source) using an Alpine Docker container
 │           └── localproxy-ssh-destination.sh  ....... run AWS Local Proxy (ssh destination) using an Alpine Docker container
+├── web  ............................................. web frontend built with React
 ├── scripts
 │   ├── cloud-build.sh  .............................. build, but not deploy, the AWS CloudFormation Stack
 │   ├── cloud-deploy.sh  ............................. build and deploy the AWS CloudFormation Stack

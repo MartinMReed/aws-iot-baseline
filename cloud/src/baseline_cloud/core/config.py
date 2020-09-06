@@ -6,6 +6,9 @@ this_dir = os.path.abspath(os.path.dirname(os.path.abspath(__file__)))
 
 
 class Config(object):
+    app_name: str
+    topic_prefix: str
+    debug_api_gateway_errors: bool
 
     def __init__(self) -> None:
         with open(f'{this_dir}/../../config.json', 'r') as f:

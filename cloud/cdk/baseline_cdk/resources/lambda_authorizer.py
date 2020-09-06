@@ -117,6 +117,7 @@ def create(stack: core.Stack) -> None:
                 'Statement': [{
                     'Effect': 'Allow',
                     'Action': [
+                        'secretsmanager:GetSecretValue',
                         'ssm:GetParameter',
                         'ssm:GetParameters'
                     ],

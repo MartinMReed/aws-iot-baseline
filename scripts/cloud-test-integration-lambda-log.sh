@@ -1,7 +1,15 @@
 #!/bin/bash
 #
-# NOTE: This test hits REDIS, which may not be accessible unless you are on a VPN to your VPC
+# What is this?
+# This script tests the AWS Lambda code used for receiving device logs,
+# and inserting into Amazon CloudWatch.
 #
+# NOTE:
+# This test hits REDIS, which may not be accessible unless you are on a VPN to your VPC.
+# It REDIS cannot be reached, the test will tell the AWS Lambda to use a mock REDIS class instead.
+#
+# How do I use it?
+# $ bash <project-root>/scripts/cloud-test-integration-lambda-log.sh
 
 set -e
 
@@ -46,7 +54,7 @@ fi
 #client_id=$(uuidgen | tr '[:upper:]' '[:lower:]')
 client_id="00000000-0000-4000-8000-000000000000"
 
-AWS_LAMBDA_EVENT="{
+AWS_LAMBDA_EVENT=$(echo "{
   'topic': '\$aws/rules/${topic_prefix}/things/${client_id}/log',
   'traceId': '$(uuidgen | tr '[:upper:]' '[:lower:]')',
   'clientId': '${client_id}',
@@ -55,8 +63,8 @@ AWS_LAMBDA_EVENT="{
   'process': 'main',
   'timestamp': $(date +%s)000,
   'message': 'This is a test message from sent through Docker.'
-}"
+}" | tr '"' "'")
 
-AWS_LAMBDA_EVENT="${AWS_LAMBDA_EVENT//"'"/\"}"
+AWS_LAMBDA_TYPE=ingest
 
 . "${script_dir}/cloud-test-integration-lambda.sh"

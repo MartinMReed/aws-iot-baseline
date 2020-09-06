@@ -1,5 +1,6 @@
 import typing
 
+import jsii
 from aws_cdk import aws_ec2
 from aws_cdk import core
 
@@ -18,6 +19,7 @@ def find_resources(scope: core.Construct, cls: typing.Any) -> typing.List[typing
     for resource in scope.node.children:
         if isinstance(resource, cls):
             resources.append(resource)
+        resources.extend(find_resources(resource, cls))
     return resources
 
 
@@ -35,6 +37,18 @@ def get_metadata(scope: core.Construct, key: str) -> typing.Any:
         if key == metadata.type: return metadata.data
     return None
 
+
+def lazy_string_value(key: str):
+    @jsii.implements(core.IStringProducer)
+    class Producer:
+        def produce(self, context):
+            return lazy_values.get(key)
+
+    # noinspection PyTypeChecker
+    return core.Lazy.string_value(Producer())
+
+
+lazy_values: typing.Dict[str, typing.Any] = {}
 
 app_name: str
 topic_prefix: str

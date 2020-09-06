@@ -6,6 +6,7 @@ import boto3
 
 import baseline_cloud.core.aws.secrets
 import baseline_cloud.core.aws.ssm
+import baseline_cloud.core.date
 import baseline_cloud.core.mqtt
 from baseline_cloud import core
 from baseline_cloud.core import aws
@@ -23,20 +24,20 @@ def verify(event: dict, context) -> None:
 
     try:
 
-        add_thing_to_thing_group(thing_name, 'verified')
-        remove_thing_from_thing_group(thing_name, 'unverified')
+        add_thing_to_thing_group(thing_name, f'{config.app_name}-verified')
+        remove_thing_from_thing_group(thing_name, f'{config.app_name}-unverified')
 
         core.mqtt.respond(event, 'accepted')
 
     except:
 
         try:
-            add_thing_to_thing_group(thing_name, 'unverified')
+            add_thing_to_thing_group(thing_name, f'{config.app_name}-unverified')
         except:
             pass
 
         try:
-            remove_thing_from_thing_group(thing_name, 'verified')
+            remove_thing_from_thing_group(thing_name, f'{config.app_name}-verified')
         except:
             pass
 
@@ -54,7 +55,7 @@ def provision(event: dict, context) -> None:
 
         csr_pem = event['csr']
 
-        cacert_arn = aws.ssm.get_parameter('cacert')
+        cacert_arn = aws.ssm.get_parameter(f'/{config.app_name}/cacert')
         cacert_id = cacert_arn.rsplit(maxsplit=1, sep='/')[1]
 
         cacert_key_pem = aws.secrets.get_secret_value(f'/{config.app_name}/key/{cacert_id}')
@@ -87,7 +88,7 @@ def provision(event: dict, context) -> None:
         create_thing(thing_name, config.app_name)
         attach_thing_principal(thing_name, client_crt_arn)
 
-        add_thing_to_thing_group(thing_name, 'unverified')
+        add_thing_to_thing_group(thing_name, f'{config.app_name}-unverified')
 
         core.mqtt.respond(event, 'accepted', arn=client_crt_arn, pem=client_crt_pem)
 
@@ -111,7 +112,13 @@ def provision(event: dict, context) -> None:
 def create_thing(thing_name: str, thing_type: str) -> None:
     iot_client.create_thing(
         thingName=thing_name,
-        thingTypeName=thing_type
+        thingTypeName=thing_type,
+        attributePayload={
+            'attributes': {
+                'createdAt': core.date.format_utc()
+            },
+            'merge': True
+        },
     )
 
 

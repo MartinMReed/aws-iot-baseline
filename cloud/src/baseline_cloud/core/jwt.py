@@ -8,6 +8,7 @@ import baseline_cloud.core.aws.cognito
 import baseline_cloud.core.aws.secrets
 import baseline_cloud.core.aws.ssm
 from baseline_cloud.core import aws
+from baseline_cloud.core.config import config
 
 
 def create(sub: str, minutes: typing.Optional[int] = 0, hours: typing.Optional[int] = 0, days: typing.Optional[int] = 0, **kwargs) -> str:
@@ -37,9 +38,9 @@ def download_cognito_jwks() -> typing.List[dict]:
     return response.json()
 
 
-jwt_secret = aws.secrets.get_secret_value('jwt_secret')
-jwt_issuer = aws.ssm.get_parameter('jwt_issuer')
+jwt_secret = aws.secrets.get_secret_value(f'/{config.app_name}/jwt-secret')
+jwt_issuer = aws.ssm.get_parameter(f'/{config.app_name}/jwt-issuer')
 
 # only load the jwks file on cold-start
-cognito_pool_url = aws.ssm.get_parameter('cognito_pool_url')
+cognito_pool_url = aws.ssm.get_parameter(f'/{config.app_name}/cognito-pool-url')
 cognito_keys = download_cognito_jwks()

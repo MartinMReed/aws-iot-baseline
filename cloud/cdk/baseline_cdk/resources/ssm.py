@@ -1,5 +1,7 @@
+from aws_cdk import aws_apigateway
 from aws_cdk import aws_cognito
 from aws_cdk import aws_iot
+from aws_cdk import aws_s3
 from aws_cdk import aws_ssm
 from aws_cdk import core
 
@@ -68,10 +70,35 @@ def create_redis(stack: core.Stack) -> None:
     redis_port.add_depends_on(redis_cache_cluster)
 
 
+def create_s3(stack: core.Stack) -> None:
+    s3_bucket: aws_s3.CfnBucket = cdk.find_resource(stack, 'Bucket')
+
+    aws_ssm.CfnParameter(
+        stack, 'BucketName',
+        name=f'/{cdk.app_name}/bucket-name',
+        value=s3_bucket.ref,
+        type='String'
+    )
+
+
+def create_api_gateway(stack: core.Stack) -> None:
+    rest_api: aws_apigateway.CfnRestApi = cdk.find_resource(stack, 'ApiGateway/RestApi')
+    stage: aws_apigateway.CfnStage = cdk.find_resource(stack, 'ApiGateway/Stage')
+
+    aws_ssm.CfnParameter(
+        stack, 'ApiGatewayUrl',
+        name=f'/{cdk.app_name}/apigateway-url',
+        value=f'https://{rest_api.ref}.execute-api.{cdk.region}.amazonaws.com/{stage.stage_name}',
+        type='String'
+    )
+
+
 def create(stack: core.Stack) -> None:
     create_cognito(stack)
     create_iot(stack)
     create_redis(stack)
+    create_s3(stack)
+    create_api_gateway(stack)
 
     aws_ssm.CfnParameter(
         stack, 'JwtIssuer',

@@ -1,4 +1,13 @@
 #!/bin/bash
+#
+# What is this?
+# This script will package the device firmware into a Docker image, along
+# with all host-side scripts.
+#
+# The package will be written to <project-root>/.build/device/<app_name>.tar.gz
+#
+# How do I use it?
+# $ bash <project-root>/scripts/device-build.sh
 
 set -e
 
@@ -7,7 +16,7 @@ script_path=${script_dir}/$(basename "${BASH_SOURCE[0]}")
 script_name=$(basename ${BASH_SOURCE[0]})
 
 root_dir=$(cd "${script_dir}/.." && pwd)
-device_dir=$(cd "${root_dir}/device" && pwd)
+device_dir=${root_dir}/device
 build_dir=${root_dir}/.build
 
 function toolchain_require() { [ -n "$(command -v $1)" ] && return 0 || >&2 echo "$1: not found"; return 1; }
@@ -58,6 +67,7 @@ pushd overlay
   cp "${device_dir}/container/files/entrypoint.sh.template" opt/${app_name}/entrypoint.sh
   rewrite app_name ${app_name} opt/${app_name}/entrypoint.sh
 
+  mkdir -p usr/bin
   cp "${device_dir}/container/files/alpine/localproxy" usr/bin/localproxy
 
   cp "${device_dir}/container/files/mosquitto.conf.template" etc/${app_name}/mosquitto.conf.template

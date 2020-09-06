@@ -5,10 +5,9 @@ from aws_cdk import aws_cloudformation
 from aws_cdk import aws_iam
 from aws_cdk import aws_iot
 from aws_cdk import aws_lambda
-from aws_cdk import aws_logs
 from aws_cdk import core
-from aws_cdk.core import RemovalPolicy
 
+from baseline_cdk.resources import cfnres_log_group
 from baseline_cdk.util import cdk
 from baseline_cdk.util.hash import file_sha1
 from baseline_cdk.util.os import shell
@@ -134,13 +133,12 @@ def create_lambda(stack: core.Stack) -> None:
 
     lambda_function.add_depends_on(lambda_role)
 
-    lambda_log_group = aws_logs.CfnLogGroup(
-        lambda_scope, 'LogGroup',
+    # use a custom CfnLogGroup to avoid errors if the group still exists (failed deployment)
+    cfnres_log_group.CfnLogGroup(
+        stack, lambda_scope, 'LogGroup',
         log_group_name=f'/aws/lambda/{lambda_function.ref}',
         retention_in_days=7,
     )
-
-    lambda_log_group.apply_removal_policy(policy=RemovalPolicy.DESTROY)
 
 
 def create_unverified_group(stack: core.Stack) -> None:
@@ -153,7 +151,7 @@ def create_unverified_group(stack: core.Stack) -> None:
         service_token=lambda_function.attr_arn
     )
     custom_resource.add_override('Type', 'Custom::IotThingGroup')
-    custom_resource.add_override('Properties.ThingGroupName', 'unverified')
+    custom_resource.add_override('Properties.ThingGroupName', f'{cdk.app_name}-unverified')
     custom_resource.add_override('Properties.ThingGroupPolicy', intermediate_policy.ref)
 
     custom_resource.add_depends_on(lambda_function)
@@ -169,7 +167,7 @@ def create_verified_group(stack: core.Stack) -> None:
         service_token=lambda_function.attr_arn
     )
     custom_resource.add_override('Type', 'Custom::IotThingGroup')
-    custom_resource.add_override('Properties.ThingGroupName', 'verified')
+    custom_resource.add_override('Properties.ThingGroupName', f'{cdk.app_name}-verified')
     custom_resource.add_override('Properties.ThingGroupPolicy', standard_policy.ref)
 
     custom_resource.add_depends_on(lambda_function)

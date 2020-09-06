@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# What is this?
+# This script tests the AWS Lambda code used for device provisioning.
+#
+# How do I use it?
+# $ bash <project-root>/scripts/cloud-test-integration-lambda-provision.sh
 
 set -e
 
@@ -36,14 +42,14 @@ client_id=$(hex_rand 128)
 client_key=$(openssl genrsa -out /dev/stdout 2048 2> /dev/null)
 client_csr=$(echo "${client_key}" | openssl req -new -key /dev/stdin -out /dev/stdout -subj "/C=US/CN=${app_name}")
 
-AWS_LAMBDA_EVENT="{
+AWS_LAMBDA_EVENT=$(echo "{
   'topic': '\$aws/rules/${topic_prefix}/clients/${client_id}/provision',
   'traceId': '$(uuidgen | tr '[:upper:]' '[:lower:]')',
   'clientId': '${client_id}',
   'principal': '$(hex_rand 64)',
   'csr': '${client_csr//$'\n'/\\n}'
-}"
+}" | tr '"' "'")
 
-AWS_LAMBDA_EVENT="${AWS_LAMBDA_EVENT//"'"/\"}"
+AWS_LAMBDA_TYPE=ingest
 
 . "${script_dir}/cloud-test-integration-lambda.sh"

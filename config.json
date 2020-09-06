@@ -9,5 +9,6 @@
     "organizational_unit": null,
     "days": 36500
   },
-  "debug_lambda_roles": true
+  "debug_lambda_roles": true,
+  "debug_api_gateway_errors": true
 }

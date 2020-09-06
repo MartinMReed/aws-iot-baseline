@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# What is this?
+# This script tests the device code for handling a job which was created remotely.
+#
+# How do I use it?
+# $ bash <project-root>/scripts/device-test-integration-jobs-sample1.sh
 
 set -e
 
@@ -28,7 +34,7 @@ echo "Creating JOB ${job_id}"
 
 aws iot create-job                                    \
   --targets "${thing_arn}"                            \
-  --job-id ${job_id}                                 \
+  --job-id ${job_id}                                  \
   --timeout-config '{"inProgressTimeoutInMinutes":2}' \
   --document "{
     \"program\": \"${job_name}\"
@@ -42,7 +48,7 @@ while [ "${job_status}" == 'queued' ] || [ "${job_status}" == 'in_progress' ]; d
   previous_job_status=${job_status}
   job_status=$(aws iot describe-job-execution              \
     --thing-name ${thing_name}                             \
-    --job-id ${job_id}                                    \
+    --job-id ${job_id}                                     \
     --output text --query 'execution.status' 2> /dev/null  \
     | tr '[:upper:]' '[:lower:]'                           \
   )

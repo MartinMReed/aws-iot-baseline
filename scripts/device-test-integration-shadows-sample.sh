@@ -1,4 +1,10 @@
 #!/bin/bash
+#
+# What is this?
+# This script tests the device code for handling remote shadow updates.
+#
+# How do I use it?
+# $ bash <project-root>/scripts/device-test-integration-shadows-sample.sh
 
 set -e
 

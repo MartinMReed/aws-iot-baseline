@@ -1,3 +1,4 @@
+import json
 import typing
 
 import jose.jwt
@@ -8,10 +9,13 @@ import baseline_cloud.core.jwt
 from baseline_cloud import core
 from baseline_cloud.authorizer.blueprints import AuthPolicy
 from baseline_cloud.core import aws
+from baseline_cloud.core.config import config
 from baseline_cloud.core.py import safe_method
 
 
 def handle(event: dict, context) -> dict:
+    print(json.dumps(event, indent=4))
+
     method_arn = event['methodArn'].split(':')
     api_gateway_arn = method_arn[5].split('/')
     aws_account_id = method_arn[4]
@@ -51,10 +55,10 @@ def handle(event: dict, context) -> dict:
 def get_access_paths(claims: dict) -> typing.Optional[typing.List[dict]]:
     if not claims: return None
 
-    if claims['iss'] == aws.ssm.get_parameter('cognito_pool_url'):
+    if claims['iss'] == aws.ssm.get_parameter(f'/{config.app_name}/cognito-pool-url'):
         return [{'path': '*', 'method': '*'}]
 
-    if claims['iss'] == aws.ssm.get_parameter('jwt_issuer'):
+    if claims['iss'] == aws.ssm.get_parameter(f'/{config.app_name}/jwt-issuer'):
         return [{'path': '*', 'method': '*'}]
 
     return None
